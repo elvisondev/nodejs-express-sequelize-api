@@ -12,12 +12,48 @@ class PessoaController extends Controllers {
 
   async getEnrollments(req, res) {
     const { estudanteId } = req.params;
-  
+
     try {
+      const listEnrollments = await pessoaServices.getStudentEnrollments(
+        Number(estudanteId)
+      );
+      if (!listEnrollments) {
+        return res
+          .status(STATUS.NOT_FOUND)
+          .json({ message: 'Estundante não encontrado na base de dados' });
+      }
+      return res.status(STATUS.OK).json(listEnrollments);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Error interno do servidor' });
+    }
+  }
 
-      const listEnrollments = await pessoaServices.getStudentEnrollments(Number(estudanteId));
+  async getAllPeople(req, res) {
+    try {
+      const listPerson = await pessoaServices.getAllRecordsScope();
+      res.status(STATUS.OK).json(listPerson);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Error interno do servidor' });
+    }
+  }
 
-      res.status(STATUS.OK).json(listEnrollments);
+  async getPeopleByRole(req, res) {
+    const byRole = req.query.role;
+
+    const rolesPermision = ['docente', 'estudante']
+
+    try {
+     if (!rolesPermision.includes(byRole)) {
+       return res.status(STATUS.BAD_REQUEST).json({message: 'Cargo não encontrado'})
+      }
+      const role = await pessoaServices.findAllByRole(byRole);
+      res.status(STATUS.OK).json(role);
     } catch (error) {
       console.error(error);
       return res

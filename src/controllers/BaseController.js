@@ -36,12 +36,8 @@ class Controllers {
   async create(req, res) {
     const createUser = req.body;
 
-    console.log('createUser:', require.body )
-
     try {
-      const createNewUser =
-      await this.entidadeServices.createRecord(createUser);
-      console.log(createNewUser)
+      const createNewUser = await this.entidadeServices.createRecord(createUser);
 
       if (!createNewUser) {
         return res
@@ -54,7 +50,7 @@ class Controllers {
         .json({ message: 'Novo usuário criado com sucesso', data: createNewUser });
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({message: 'Erro interno do servidor'})
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({error:error.message})
     }
   }
 
