@@ -11,8 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       });
       Pessoa.hasMany(models.Matricula, {
         foreignKey: 'estudante_id',
-        // scope: { status: 'matriculado' },
+       scope: { status: 'matriculado' },
         as: 'aulasMatriculadas'
+      });
+      Pessoa.hasMany(models.Matricula, {
+        foreignKey: 'estudante_id',
+        as:  'todasMatriculas'
       });
     }
   }
@@ -42,7 +46,8 @@ module.exports = (sequelize, DataTypes) => {
           cpfValido: cpf => {
             if (!validarCpf(cpf)) throw new Error('Número de CPF inválido');
           }
-        }
+        },
+
       },
       ativo: DataTypes.BOOLEAN,
       role: DataTypes.STRING

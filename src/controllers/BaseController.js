@@ -1,5 +1,6 @@
 const console = require('console');
 const { STATUS } = require('../utils/http.js');
+const convertIDs = require('../utils/helperfunction.js');
 
 class Controllers {
   constructor(entidadeServices) {
@@ -12,7 +13,9 @@ class Controllers {
       return res.status(STATUS.OK).json(listaRegistros);
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({message: 'Erro interno do servidor'})
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -29,7 +32,31 @@ class Controllers {
       return res.status(STATUS.OK).json(IDbuscado);
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({message: 'Erro interno do servidor'})
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Erro interno do servidor' });
+    }
+  }
+
+  async getOne(req, res) {
+    const { ...params } = req.params;
+    const where = convertIDs(params)
+    console.log(params)
+
+    try {
+      const oneID = await this.entidadeServices.findRecord(where);
+
+      if (!oneID) {
+        return res
+          .status(STATUS.NOT_FOUND)
+          .json({ message: 'Busca não retornou nada' });
+      }
+      return res.status(STATUS.OK).json(oneID);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -37,7 +64,8 @@ class Controllers {
     const createUser = req.body;
 
     try {
-      const createNewUser = await this.entidadeServices.createRecord(createUser);
+      const createNewUser =
+        await this.entidadeServices.createRecord(createUser);
 
       if (!createNewUser) {
         return res
@@ -45,24 +73,25 @@ class Controllers {
           .json({ message: 'Error ao cadastrar usuário' });
       }
 
-      return res
-        .status(STATUS.CREATED)
-        .json({ message: 'Novo usuário criado com sucesso', data: createNewUser });
+      return res.status(STATUS.CREATED).json({
+        message: 'Novo usuário criado com sucesso',
+        data: createNewUser
+      });
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({error:error.message})
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ error: error.message });
     }
   }
 
   async update(req, res) {
-    const { id } = req.params;
+    const { ... params  } = req.params;
     const dadosAtualizado = req.body;
-
+    const where = convertIDs(params)
     try {
-
       const foiAtualizado = await this.entidadeServices.updateRecord(
-        dadosAtualizado,
-        Number(id)
+        dadosAtualizado, where
       );
 
       if (!foiAtualizado) {
@@ -73,7 +102,9 @@ class Controllers {
       return res.status(STATUS.OK).json({ message: `Atualizado com sucesso` });
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({message: 'Erro interno do servidor'})
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -90,12 +121,13 @@ class Controllers {
       }
 
       return res
-          .status(STATUS.OK)
-          .json({ message: 'User deletado com suscesso' });
-
+        .status(STATUS.OK)
+        .json({ message: 'User deletado com suscesso' });
     } catch (error) {
       console.error(error);
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({message: 'Erro interno do servidor'})
+      return res
+        .status(STATUS.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Erro interno do servidor' });
     }
   }
 }
