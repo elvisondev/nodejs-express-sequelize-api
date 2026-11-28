@@ -31,7 +31,7 @@ class Services {
     });
   }
 
-  async updateRecord(dadosAtualizados, where, transacao = {}) {
+  async updateRecord(dadosAtualizados, where, transacao) {
     const ListaResgistroAtualizado = await dataSource[this.model].update(
       dadosAtualizados,
       { where: { ...where },
