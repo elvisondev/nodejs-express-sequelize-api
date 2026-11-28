@@ -9,6 +9,7 @@
     "dev:2": "node --watch --env-file=.env --inspect src/server.js",
     "test": "node --env-file=.env.test --test --test-concurrency=1 src/test/*.test.js",
     "test:jest": "node --env-file=.env.test ./node_modules/jest/bin/jest.js",
+    "test:report": "npm run test:jest -- --json --outputFile=docs/test-reports/jest-results.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write"
