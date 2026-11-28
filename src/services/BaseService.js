@@ -5,21 +5,37 @@ class Services {
     this.model = nomeModel;
   }
 
-  async findAllRecords() {
-    return dataSource[this.model].findAll();
+  async findAllRecords(where = {}) {
+    return dataSource[this.model].findAll({ ...where });
+  }
+
+  async getAllRecords(scopeAll) {
+    return dataSource[this.model].scope(scopeAll).findAll();
+  }
+
+  async findAllByScope(roleScope) {
+    return dataSource[this.model].scope(roleScope).findAll();
   }
 
   async findRecordById(id) {
-    console.log(id)
     return dataSource[this.model].findByPk(id);
   }
 
-  async updateRecord(dadosAtualizados, id) {
-    const ListaResgistroAtualizado = dataSource[this.model].update(
+  async findAndCountRecords(options) {
+    return dataSource[this.model].findAndCountAll({ ...options });
+  }
+
+  async findRecord(where) {
+    return dataSource[this.model].findOne({
+      where: { ...where }
+    });
+  }
+
+  async updateRecord(dadosAtualizados, where, transacao = {}) {
+    const ListaResgistroAtualizado = await dataSource[this.model].update(
       dadosAtualizados,
-      {
-        where: { id: id }
-      }
+      { where: { ...where },
+      transaction: transacao }
     );
     if (ListaResgistroAtualizado[0] === 0) {
       return false;
